@@ -1,0 +1,82 @@
+MainWindow {
+    background-color: white;
+}
+
+QScrollableTabBar {
+    background-color: #F3F3F3;
+}
+
+QScrollableTabBar>QWidget#entity {
+    border: 1px solid red;
+}
+
+QScrollableTabBarTab {
+    qproperty-icon: url(":/svg/folder-music-fill.svg");
+    background-color: #ECECEC;
+    padding: 9px 9px;
+    border-left: 1px solid #F3F3F3;
+    border-right: 1px solid #F3F3F3;
+}
+
+QScrollableTabBarTab>QWidget#icon-button {
+    padding: 0;
+    background-color: transparent;
+}
+
+QScrollableTabBarTab>QWidget#text-label {
+    padding: 0 4px;
+}
+
+QScrollableTabBarTab>QWidget#close-button {
+    qproperty-icon: url(":/svg/close-line.svg");
+    qproperty-iconSize: 10px 10px;
+    padding: 4px;
+    background-color: transparent;
+    border-radius: 3px;
+}
+
+QScrollableTabBarTab>QWidget#close-button:hover {
+    background-color: rgba(0, 0, 0, 10%);
+}
+
+QScrollableTabBarTab>QWidget#close-button:pressed {
+    background-color: rgba(0, 0, 0, 20%);
+}
+
+QScrollableTabBarTab:hover {
+    background-color: #EFEFEF;
+}
+
+QScrollableTabBarTab[selected=true] {
+    background-color: white;
+}
+
+QScrollableTabBar>QScrollBar#scroll-bar {
+    background: transparent;
+    margin: 0;
+    min-height: 4px;
+    max-height: 4px;
+}
+
+QScrollableTabBar>QScrollBar#scroll-bar::handle {
+    background: rgba(0, 0, 0, 0.3);
+    border: 0px;
+    min-width: 90px;
+}
+
+QScrollableTabBar>QScrollBar#scroll-bar::handle:hover {
+    background: rgba(0, 0, 0, 0.4);
+}
+
+QScrollableTabBar>QScrollBar#scroll-bar::sub-line,
+QScrollableTabBar>QScrollBar#scroll-bar::add-line {
+    background: transparent;
+    width: 0px;
+}
+
+QScrollableTabBar>QScrollBar#scroll-bar::sub-page,
+QScrollableTabBar>QScrollBar#scroll-bar::add-page,
+QScrollableTabBar>QScrollBar#scroll-bar::up-arrow,
+QScrollableTabBar>QScrollBar#scroll-bar::down-arrow {
+    background: transparent;
+}

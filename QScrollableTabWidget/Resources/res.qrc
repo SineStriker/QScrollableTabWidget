@@ -1,0 +1,7 @@
+<RCC>
+    <qresource prefix="/">
+        <file>themes/default.qss</file>
+        <file>svg/folder-music-fill.svg</file>
+        <file>svg/close-line.svg</file>
+    </qresource>
+</RCC>
