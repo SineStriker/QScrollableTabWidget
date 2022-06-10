@@ -3,7 +3,9 @@
 
 #include <QApplication>
 #include <QDebug>
+#include <QDropEvent>
 #include <QFile>
+#include <QMimeData>
 
 static void loadStyleSheet() {
     QFile qss(":/themes/default.qss");
@@ -41,7 +43,22 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
 
     connect(tabs, &QScrollableTabWidget::tabCloseRequested, this,
             [&](int index) { tabs->removeTab(index); });
+
+    setAcceptDrops(true);
 }
 
 MainWindow::~MainWindow() {
+}
+
+void MainWindow::dragEnterEvent(QDragEnterEvent *event) {
+    event->acceptProposedAction();
+}
+
+void MainWindow::dropEvent(QDropEvent *event) {
+    const QMimeData *mime = event->mimeData();
+    auto formats = mime->formats();
+    for (auto it = formats.begin(); it != formats.end(); ++it) {
+        auto format = *it;
+        qDebug().noquote() << format << mime->data(format);
+    }
 }

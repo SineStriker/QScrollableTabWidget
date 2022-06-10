@@ -10,6 +10,7 @@ QScrollableTabWidgetPrivate::~QScrollableTabWidgetPrivate() {
 void QScrollableTabWidgetPrivate::init() {
     Q_Q(QScrollableTabWidget);
     q->setAttribute(Qt::WA_StyledBackground);
+    q->setAcceptDrops(true);
 
     mainLayout = new QVBoxLayout();
     mainLayout->setMargin(0);

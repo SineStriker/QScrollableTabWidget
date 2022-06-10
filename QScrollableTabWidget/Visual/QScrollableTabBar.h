@@ -7,6 +7,7 @@
 #include <QTabBar>
 #include <QVariant>
 
+class QScrollableTabWidget;
 class QScrollableTabBarPrivate;
 
 class QScrollableTabBar : public QFrame {
@@ -17,6 +18,8 @@ class QScrollableTabBar : public QFrame {
 public:
     explicit QScrollableTabBar(QWidget *parent = nullptr);
     ~QScrollableTabBar();
+
+    friend class QScrollableTabWidget;
 
 public:
     int addTab(const QString &text);
@@ -68,11 +71,7 @@ protected:
     virtual void tabRemoved(int index);
 
     void resizeEvent(QResizeEvent *event) override;
-    void mousePressEvent(QMouseEvent *event) override;
-    void mouseMoveEvent(QMouseEvent *event) override;
-    void mouseReleaseEvent(QMouseEvent *event) override;
     void wheelEvent(QWheelEvent *event) override;
-
     void timerEvent(QTimerEvent *event) override;
 
     bool eventFilter(QObject *obj, QEvent *event) override;
@@ -92,6 +91,10 @@ public:
     void setScrollOpacity(double opacity);
 
     QScrollBar *scrollBar() const;
+    QScrollableTabWidget *tabWidget() const;
+
+    int currentDraggedIndex();
+    static QScrollableTabBar *currentDraggedTabBar();
 
 signals:
     void styleChanged();

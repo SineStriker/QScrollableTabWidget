@@ -1,6 +1,8 @@
 #include "QScrollableTabBar.h"
 #include "QScrollableTabBar_p.h"
 
+#include "QScrollableTabWidget.h"
+
 #include <QApplication>
 #include <QDebug>
 #include <QMouseEvent>
@@ -33,7 +35,6 @@ int QScrollableTabBar::insertTab(int index, const QIcon &icon, const QString &te
 
     Q_D(QScrollableTabBar);
     d->entityLayout->insertWidget(index, tab);
-    d->entity->adjustSize();
 
     connect(tab->closeButton(), &QAbstractButton::clicked, this, &QScrollableTabBar::_q_closeTab);
 
@@ -53,8 +54,7 @@ void QScrollableTabBar::removeTab(int index) {
     auto tab = qobject_cast<QScrollableTabBarTab *>(item->widget());
     tab->hide();
     tab->deleteLater();
-
-    d->entity->adjustSize();
+    delete item;
 
     if (d->current == tab) {
         d->current = nullptr;
@@ -245,9 +245,11 @@ void QScrollableTabBar::setCurrentIndex(int index) {
 }
 
 void QScrollableTabBar::tabInserted(int index) {
+    Q_UNUSED(index)
 }
 
 void QScrollableTabBar::tabRemoved(int index) {
+    Q_UNUSED(index)
 }
 
 void QScrollableTabBar::resizeEvent(QResizeEvent *event) {
@@ -259,17 +261,7 @@ void QScrollableTabBar::resizeEvent(QResizeEvent *event) {
     if (event->oldSize().width() != event->size().width() && d->scrollBar->isVisible()) {
         d->lastResized = QTime::currentTime();
     }
-
     QFrame::resizeEvent(event);
-}
-
-void QScrollableTabBar::mousePressEvent(QMouseEvent *event) {
-}
-
-void QScrollableTabBar::mouseMoveEvent(QMouseEvent *event) {
-}
-
-void QScrollableTabBar::mouseReleaseEvent(QMouseEvent *event) {
 }
 
 void QScrollableTabBar::wheelEvent(QWheelEvent *event) {
@@ -308,15 +300,32 @@ bool QScrollableTabBar::eventFilter(QObject *obj, QEvent *event) {
         auto tab = qobject_cast<QScrollableTabBarTab *>(obj);
         switch (event->type()) {
         case QEvent::MouseButtonPress: {
-            d->setCurrentTab(tab);
+            QMouseEvent *e = static_cast<QMouseEvent *>(event);
+            if (e->button() == Qt::LeftButton) {
+                d->setCurrentTab(tab);
+            }
             break;
         }
         case QEvent::MouseMove: {
+            d->draggedIndex = d->entityLayout->indexOf(tab);
+
+            // Release Mouse
+            QMouseEvent *e = static_cast<QMouseEvent *>(event);
+            {
+                QMouseEvent newEvent(QEvent::MouseButtonRelease, e->pos(), Qt::LeftButton,
+                                     Qt::NoButton, Qt::NoModifier);
+                QApplication::sendEvent(this, &newEvent);
+            }
+            d->startDrag(tab);
+
+            d->draggedIndex = -1;
             break;
         }
         case QEvent::MouseButtonRelease: {
-            QMouseEvent *e = static_cast<QMouseEvent *>(event);
-            emit tabBarClicked(e->button(), d->entityLayout->indexOf(tab));
+            if (d->draggedIndex < 0) {
+                QMouseEvent *e = static_cast<QMouseEvent *>(event);
+                emit tabBarClicked(e->button(), d->entityLayout->indexOf(tab));
+            }
             break;
         }
         default:
@@ -340,6 +349,10 @@ bool QScrollableTabBar::eventFilter(QObject *obj, QEvent *event) {
         switch (event->type()) {
         case QEvent::Resize: {
             d->updateScroll();
+            break;
+        }
+        case QEvent::LayoutRequest: {
+            d->entity->adjustSize();
             break;
         }
         default:
@@ -399,4 +412,17 @@ void QScrollableTabBar::setScrollOpacity(double opacity) {
 QScrollBar *QScrollableTabBar::scrollBar() const {
     Q_D(const QScrollableTabBar);
     return d->scrollBar;
+}
+
+QScrollableTabWidget *QScrollableTabBar::tabWidget() const {
+    return qobject_cast<QScrollableTabWidget *>(parentWidget());
+}
+
+QScrollableTabBar *QScrollableTabBar::currentDraggedTabBar() {
+    return QScrollableTabBarPrivate::draggedTabBar;
+}
+
+int QScrollableTabBar::currentDraggedIndex() {
+    Q_D(const QScrollableTabBar);
+    return d->draggedIndex;
 }

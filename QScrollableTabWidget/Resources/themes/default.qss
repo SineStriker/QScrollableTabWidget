@@ -6,10 +6,6 @@ QScrollableTabBar {
     background-color: #F3F3F3;
 }
 
-QScrollableTabBar>QWidget#entity {
-    border: 1px solid red;
-}
-
 QScrollableTabBarTab {
     qproperty-icon: url(":/svg/folder-music-fill.svg");
     background-color: #ECECEC;

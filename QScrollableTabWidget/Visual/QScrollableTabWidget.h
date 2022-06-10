@@ -59,6 +59,10 @@ protected:
     virtual void tabRemoved(int index);
 
     void setTabBar(QScrollableTabBar *tabBar);
+    void mousePressEvent(QMouseEvent *event) override;
+
+    void dragEnterEvent(QDragEnterEvent *event) override;
+    void dropEvent(QDropEvent *event) override;
 
 protected:
     QScrollableTabWidget(QScrollableTabWidgetPrivate &d, QWidget *parent = nullptr);

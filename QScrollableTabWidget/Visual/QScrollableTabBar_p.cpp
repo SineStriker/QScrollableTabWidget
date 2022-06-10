@@ -1,8 +1,14 @@
 #include "QScrollableTabBar_p.h"
 #include "QScrollableTabBar.h"
 
+#include <QApplication>
 #include <QDateTime>
+#include <QDebug>
+#include <QDrag>
+#include <QMimeData>
 #include <QPainter>
+
+QScrollableTabBar *QScrollableTabBarPrivate::draggedTabBar = nullptr;
 
 QScrollableTabBarPrivate::QScrollableTabBarPrivate() {
 }
@@ -18,6 +24,7 @@ void QScrollableTabBarPrivate::init() {
     previous = nullptr;
 
     selectionBehaviorOnRemove = QTabBar::SelectPreviousTab;
+    draggedIndex = -1;
 
     entityLayout = new QHBoxLayout();
     entityLayout->setMargin(0);
@@ -60,6 +67,7 @@ void QScrollableTabBarPrivate::updateScroll() {
 
     int dw = entity->width() - q->width();
     if (dw <= 0) {
+        scrollBar->setValue(0);
         scrollBar->hide();
 
         // Stop animation
@@ -70,8 +78,9 @@ void QScrollableTabBarPrivate::updateScroll() {
         opacityEffect->setOpacity(0);
     } else {
         scrollBar->show();
-        scrollBar->setSingleStep(dw / 10);
         scrollBar->setRange(0, dw);
+        scrollBar->setPageStep(dw);
+        scrollBar->setSingleStep(dw / 80);
     }
 }
 
@@ -86,6 +95,44 @@ void QScrollableTabBarPrivate::runOpacityTween(bool visible) {
     opacityTween->setDuration(qAbs(opacityEffect->opacity() - visible) * duration);
 
     opacityTween->start();
+}
+
+void QScrollableTabBarPrivate::startDrag(QScrollableTabBarTab *tab) {
+    if (current != tab) {
+        setCurrentTab(tab);
+    }
+
+    Q_Q(QScrollableTabBar);
+
+    QDrag *drag = new QDrag(tab);
+    QMimeData *mime = new QMimeData();
+
+    // Carry Data
+    QVariant var = tab->data();
+    if (var.type() == QVariant::String) {
+        mime->setData("text/plain", var.toString().toUtf8());
+    } else {
+        mime->setData("text/plain", QByteArray::number(qApp->applicationPid()));
+    }
+    mime->setData(QString("application/%1.data").arg(qAppName()), q->metaObject()->className());
+
+    QPixmap pixmap(tab->size());
+    pixmap.fill(Qt::transparent);
+    tab->render(&pixmap);
+
+    drag->setMimeData(mime);
+    drag->setPixmap(pixmap);
+    drag->setHotSpot(tab->mapFromGlobal(QCursor::pos()));
+
+    draggedTabBar = q;
+
+    // Block
+    Qt::DropAction res = drag->exec(Qt::ActionMask);
+
+    draggedTabBar = nullptr;
+
+    // After Drop
+//    qDebug() << "Drag Over:" << res;
 }
 
 QScrollableTabBarTab *QScrollableTabBarPrivate::tabAtIndex(int index) const {

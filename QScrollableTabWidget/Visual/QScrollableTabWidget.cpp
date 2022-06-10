@@ -1,5 +1,12 @@
 #include "QScrollableTabWidget.h"
 #include "QScrollableTabWidget_p.h"
+#include "QScrollableTabBar_p.h"
+
+#include <QApplication>
+#include <QDebug>
+#include <QDragEnterEvent>
+#include <QDropEvent>
+#include <QMimeData>
 
 QScrollableTabWidget::QScrollableTabWidget(QWidget *parent)
     : QScrollableTabWidget(*new QScrollableTabWidgetPrivate(), parent) {
@@ -154,6 +161,74 @@ void QScrollableTabWidget::setTabBar(QScrollableTabBar *tabBar) {
             &QScrollableTabWidget::tabBarClicked);
     connect(d->tabBar, &QScrollableTabBar::tabCloseRequested, this,
             &QScrollableTabWidget::tabCloseRequested);
+}
+
+void QScrollableTabWidget::mousePressEvent(QMouseEvent *event) {
+    if (event->button() == Qt::LeftButton) {
+        auto bar = tabBar()->d_func()->entity;
+        qDebug() << bar->sizeHint() << bar->size() << bar->layout()->totalSizeHint();
+    }
+}
+
+void QScrollableTabWidget::dragEnterEvent(QDragEnterEvent *event) {
+    const QMimeData *mime = event->mimeData();
+    QString idFormat = QString("application/%1.data").arg(qAppName());
+    if (mime->hasFormat(idFormat)) {
+        event->acceptProposedAction();
+        return;
+    }
+    return QWidget::dragEnterEvent(event);
+}
+
+void QScrollableTabWidget::dropEvent(QDropEvent *event) {
+    const QMimeData *mime = event->mimeData();
+    QString idFormat = QString("application/%1.data").arg(qAppName());
+    if (mime->hasFormat(idFormat)) {
+        auto orgBar = QScrollableTabBar::currentDraggedTabBar();
+        int orgIndex;
+        if (orgBar && (orgIndex = orgBar->currentDraggedIndex()) >= 0) {
+            // Calculate New Index
+            auto bar = tabBar();
+            QPoint p = bar->mapFromGlobal(QCursor::pos());
+            int index = bar->tabAt(p);
+            if (index < 0 && (p.y() >= 0 && p.y() <= bar->height())) {
+                if (p.x() < 0) {
+                    index = 0;
+                } else if (p.x() > bar->width()) {
+                    index = bar->count();
+                }
+            }
+            if (index < 0) {
+                if (orgBar != bar) {
+                    index = count();
+                } else {
+                    index = orgIndex;
+                }
+            }
+
+            if (orgBar == bar) {
+                if (index != orgIndex) {
+                    bar->moveTab(orgIndex, index);
+                }
+            } else {
+                // Record And Remove
+                auto orgTabs = orgBar->tabWidget();
+                auto tab = orgTabs->widget(orgIndex);
+                auto icon = orgBar->tabIcon(orgIndex);
+                auto label = orgBar->tabText(orgIndex);
+                orgTabs->removeTab(orgIndex);
+
+                // Insert And Switch
+                insertTab(index, tab, icon, label);
+            }
+
+            setCurrentIndex(index);
+
+            event->acceptProposedAction();
+            return;
+        }
+    }
+    return QWidget::dropEvent(event);
 }
 
 QScrollableTabWidget::QScrollableTabWidget(QScrollableTabWidgetPrivate &d, QWidget *parent)

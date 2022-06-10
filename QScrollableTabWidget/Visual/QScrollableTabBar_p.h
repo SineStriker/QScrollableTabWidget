@@ -29,7 +29,7 @@ public:
 
     void runOpacityTween(bool visible);
 
-    void startDrag();
+    void startDrag(QScrollableTabBarTab *tab);
 
     QScrollableTabBarTab *tabAtIndex(int index) const;
     void setCurrentTab(QScrollableTabBarTab *tab);
@@ -55,6 +55,11 @@ public:
 
     // Realtime Status
     QScrollableTabBarTab *current, *previous;
+
+    // Drag
+    int draggedIndex;
+
+    static QScrollableTabBar *draggedTabBar;
 };
 
 #endif // QSCROLLABLETABBARPRIVATE_H

@@ -1,6 +1,8 @@
 #include "QScrollableTabBarTab.h"
 #include "QScrollableTabBarTab_p.h"
 
+#include <QDebug>
+#include <QMouseEvent>
 #include <QStyle>
 
 QScrollableTabBarTab::QScrollableTabBarTab(QWidget *parent)
@@ -76,11 +78,16 @@ QAbstractButton *QScrollableTabBarTab::closeButton() const {
     return d->closeButton;
 }
 
+void QScrollableTabBarTab::mousePressEvent(QMouseEvent *event) {
+    if (event->button() == Qt::LeftButton) {
+        qDebug() << sizeHint() << size() << layout()->totalSizeHint();
+    }
+}
+
 QScrollableTabBarTab::QScrollableTabBarTab(QScrollableTabBarTabPrivate &d, QWidget *parent)
     : QFrame(parent), d_ptr(&d) {
     d.q_ptr = this;
     d.init();
 
-    setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     setProperty("selected", false);
 }
