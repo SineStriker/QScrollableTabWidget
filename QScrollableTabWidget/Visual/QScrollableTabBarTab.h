@@ -36,9 +36,6 @@ public:
     QAbstractButton *closeButton() const;
 
 protected:
-    void mousePressEvent(QMouseEvent *event) override;
-
-protected:
     QScrollableTabBarTab(QScrollableTabBarTabPrivate &d, QWidget *parent = nullptr);
 
     QScopedPointer<QScrollableTabBarTabPrivate> d_ptr;

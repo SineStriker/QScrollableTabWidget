@@ -78,12 +78,6 @@ QAbstractButton *QScrollableTabBarTab::closeButton() const {
     return d->closeButton;
 }
 
-void QScrollableTabBarTab::mousePressEvent(QMouseEvent *event) {
-    if (event->button() == Qt::LeftButton) {
-        qDebug() << sizeHint() << size() << layout()->totalSizeHint();
-    }
-}
-
 QScrollableTabBarTab::QScrollableTabBarTab(QScrollableTabBarTabPrivate &d, QWidget *parent)
     : QFrame(parent), d_ptr(&d) {
     d.q_ptr = this;

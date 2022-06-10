@@ -1,12 +1,17 @@
 #include "QScrollableTabWidget.h"
-#include "QScrollableTabWidget_p.h"
 #include "QScrollableTabBar_p.h"
+#include "QScrollableTabWidget_p.h"
 
 #include <QApplication>
 #include <QDebug>
 #include <QDragEnterEvent>
 #include <QDropEvent>
 #include <QMimeData>
+
+static inline QString id_format() {
+    return QString("application/%1.pid%2.data")
+        .arg(qAppName(), QString::number(qApp->applicationPid()));
+}
 
 QScrollableTabWidget::QScrollableTabWidget(QWidget *parent)
     : QScrollableTabWidget(*new QScrollableTabWidgetPrivate(), parent) {
@@ -163,17 +168,9 @@ void QScrollableTabWidget::setTabBar(QScrollableTabBar *tabBar) {
             &QScrollableTabWidget::tabCloseRequested);
 }
 
-void QScrollableTabWidget::mousePressEvent(QMouseEvent *event) {
-    if (event->button() == Qt::LeftButton) {
-        auto bar = tabBar()->d_func()->entity;
-        qDebug() << bar->sizeHint() << bar->size() << bar->layout()->totalSizeHint();
-    }
-}
-
 void QScrollableTabWidget::dragEnterEvent(QDragEnterEvent *event) {
     const QMimeData *mime = event->mimeData();
-    QString idFormat = QString("application/%1.data").arg(qAppName());
-    if (mime->hasFormat(idFormat)) {
+    if (mime->hasFormat(id_format())) {
         event->acceptProposedAction();
         return;
     }
@@ -182,8 +179,9 @@ void QScrollableTabWidget::dragEnterEvent(QDragEnterEvent *event) {
 
 void QScrollableTabWidget::dropEvent(QDropEvent *event) {
     const QMimeData *mime = event->mimeData();
-    QString idFormat = QString("application/%1.data").arg(qAppName());
-    if (mime->hasFormat(idFormat)) {
+    QString idFormat = id_format();
+    if (mime->hasFormat(idFormat) &&
+        !mime->data(idFormat).compare(QScrollableTabBar::staticMetaObject.className())) {
         auto orgBar = QScrollableTabBar::currentDraggedTabBar();
         int orgIndex;
         if (orgBar && (orgIndex = orgBar->currentDraggedIndex()) >= 0) {

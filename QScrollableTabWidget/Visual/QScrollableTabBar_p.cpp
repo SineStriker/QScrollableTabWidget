@@ -8,6 +8,11 @@
 #include <QMimeData>
 #include <QPainter>
 
+static inline QString id_format() {
+    return QString("application/%1.pid%2.data")
+        .arg(qAppName(), QString::number(qApp->applicationPid()));
+}
+
 QScrollableTabBar *QScrollableTabBarPrivate::draggedTabBar = nullptr;
 
 QScrollableTabBarPrivate::QScrollableTabBarPrivate() {
@@ -80,7 +85,7 @@ void QScrollableTabBarPrivate::updateScroll() {
         scrollBar->show();
         scrollBar->setRange(0, dw);
         scrollBar->setPageStep(dw);
-        scrollBar->setSingleStep(dw / 80);
+        scrollBar->setSingleStep(qMax(int(dw / 40), 1));
     }
 }
 
@@ -111,10 +116,8 @@ void QScrollableTabBarPrivate::startDrag(QScrollableTabBarTab *tab) {
     QVariant var = tab->data();
     if (var.type() == QVariant::String) {
         mime->setData("text/plain", var.toString().toUtf8());
-    } else {
-        mime->setData("text/plain", QByteArray::number(qApp->applicationPid()));
     }
-    mime->setData(QString("application/%1.data").arg(qAppName()), q->metaObject()->className());
+    mime->setData(id_format(), QScrollableTabBar::staticMetaObject.className());
 
     QPixmap pixmap(tab->size());
     pixmap.fill(Qt::transparent);
@@ -131,8 +134,7 @@ void QScrollableTabBarPrivate::startDrag(QScrollableTabBarTab *tab) {
 
     draggedTabBar = nullptr;
 
-    // After Drop
-//    qDebug() << "Drag Over:" << res;
+    Q_UNUSED(res)
 }
 
 QScrollableTabBarTab *QScrollableTabBarPrivate::tabAtIndex(int index) const {

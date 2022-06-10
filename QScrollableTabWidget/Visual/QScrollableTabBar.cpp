@@ -41,6 +41,9 @@ int QScrollableTabBar::insertTab(int index, const QIcon &icon, const QString &te
     int res = d->entityLayout->indexOf(tab);
     tabInserted(res);
 
+    if (count() == 1) {
+        setCurrentIndex(0);
+    }
     return res;
 }
 
@@ -58,24 +61,29 @@ void QScrollableTabBar::removeTab(int index) {
 
     if (d->current == tab) {
         d->current = nullptr;
+        int cnt = count();
         switch (d->selectionBehaviorOnRemove) {
-        case QTabBar::SelectLeftTab:
-            if (index > 0) {
-                setCurrentIndex(index - 1);
-            }
-            break;
-        case QTabBar::SelectRightTab:
-            if (index < count() - 1) {
-                setCurrentIndex(index + 1);
-            }
-            break;
         case QTabBar::SelectPreviousTab:
             if (d->previous) {
                 d->setCurrentTab(d->previous);
-            } else if (index > 0) {
+                break;
+            }
+        case QTabBar::SelectLeftTab: {
+            if (index > 0) {
                 setCurrentIndex(index - 1);
+            } else if (cnt > 0) {
+                setCurrentIndex(0);
             }
             break;
+        }
+        case QTabBar::SelectRightTab: {
+            if (index < cnt - 1) {
+                setCurrentIndex(index + 1);
+            } else if (cnt > 0) {
+                setCurrentIndex(cnt - 1);
+            }
+            break;
+        }
         }
     }
     if (d->previous == tab) {
