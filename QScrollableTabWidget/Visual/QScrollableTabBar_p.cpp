@@ -1,6 +1,7 @@
 #include "QScrollableTabBar_p.h"
 #include "QScrollableTabBar.h"
 
+#include <QDateTime>
 #include <QPainter>
 
 QScrollableTabBarPrivate::QScrollableTabBarPrivate() {
@@ -29,7 +30,6 @@ void QScrollableTabBarPrivate::init() {
 
     scrollBar = new QScrollBar(Qt::Horizontal, q);
     scrollBar->setObjectName("scroll-bar");
-    scrollBar->setSingleStep(40);
 
     scrollBar->installEventFilter(q);
 
@@ -43,6 +43,9 @@ void QScrollableTabBarPrivate::init() {
 
     opacityTween = new QPropertyAnimation(q, "scrollOpacity");
     opacityTween->setEasingCurve(QEasingCurve::OutCubic);
+
+    timerId = q->startTimer(100);
+    underMouse = false;
 
     updateScroll();
 }
@@ -60,10 +63,14 @@ void QScrollableTabBarPrivate::updateScroll() {
         scrollBar->hide();
 
         // Stop animation
+        underMouse = false;
+        lastResized = QTime();
+
         opacityTween->stop();
         opacityEffect->setOpacity(0);
     } else {
         scrollBar->show();
+        scrollBar->setSingleStep(dw / 10);
         scrollBar->setRange(0, dw);
     }
 }
@@ -101,6 +108,13 @@ void QScrollableTabBarPrivate::setCurrentTab(QScrollableTabBarTab *tab) {
     tab->setSelected(true);
     previous = current;
     current = tab;
+
+    // Move View Port
+    if (tab->x() + entity->x() < 0) {
+        scrollBar->setValue(tab->x());
+    } else if (tab->x() + tab->width() + entity->x() > q->width()) {
+        scrollBar->setValue(tab->x() + tab->width() - q->width());
+    }
 
     emit q->currentChanged(entityLayout->indexOf(tab));
 }

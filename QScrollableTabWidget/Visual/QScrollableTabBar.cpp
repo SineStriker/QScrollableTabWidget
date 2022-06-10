@@ -4,6 +4,7 @@
 #include <QApplication>
 #include <QDebug>
 #include <QMouseEvent>
+#include <QTimerEvent>
 
 QScrollableTabBar::QScrollableTabBar(QWidget *parent)
     : QScrollableTabBar(*new QScrollableTabBarPrivate(), parent) {
@@ -254,6 +255,11 @@ void QScrollableTabBar::resizeEvent(QResizeEvent *event) {
     d->layoutScroll();
     d->updateScroll();
 
+    // Save Time
+    if (event->oldSize().width() != event->size().width() && d->scrollBar->isVisible()) {
+        d->lastResized = QTime::currentTime();
+    }
+
     QFrame::resizeEvent(event);
 }
 
@@ -266,20 +272,6 @@ void QScrollableTabBar::mouseMoveEvent(QMouseEvent *event) {
 void QScrollableTabBar::mouseReleaseEvent(QMouseEvent *event) {
 }
 
-void QScrollableTabBar::enterEvent(QEvent *event) {
-    Q_D(QScrollableTabBar);
-    if (d->scrollBar->isVisible()) {
-        d->runOpacityTween(1);
-    }
-}
-
-void QScrollableTabBar::leaveEvent(QEvent *event) {
-    Q_D(QScrollableTabBar);
-    if (d->scrollBar->isVisible()) {
-        d->runOpacityTween(0);
-    }
-}
-
 void QScrollableTabBar::wheelEvent(QWheelEvent *event) {
     Q_D(QScrollableTabBar);
     if (d->scrollBar->isVisible()) {
@@ -288,10 +280,25 @@ void QScrollableTabBar::wheelEvent(QWheelEvent *event) {
     QFrame::wheelEvent(event);
 }
 
-void QScrollableTabBar::changeEvent(QEvent *event) {
-}
-
 void QScrollableTabBar::timerEvent(QTimerEvent *event) {
+    Q_D(QScrollableTabBar);
+    if (event->timerId() == d->timerId) {
+        if (d->scrollBar->isVisible()) {
+            if ((d->lastResized.isValid() && d->lastResized.msecsTo(QTime::currentTime()) < 1500) ||
+                d->scrollBar->isSliderDown() ||
+                this->rect().contains(this->mapFromGlobal(QCursor::pos()))) {
+                if (!d->underMouse) {
+                    d->underMouse = true;
+                    d->runOpacityTween(true);
+                }
+            } else {
+                if (d->underMouse) {
+                    d->underMouse = false;
+                    d->runOpacityTween(false);
+                }
+            }
+        }
+    }
 }
 
 bool QScrollableTabBar::eventFilter(QObject *obj, QEvent *event) {

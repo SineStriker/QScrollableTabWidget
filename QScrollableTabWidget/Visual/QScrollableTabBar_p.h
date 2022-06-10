@@ -4,6 +4,7 @@
 #include <QGraphicsOpacityEffect>
 #include <QPropertyAnimation>
 
+#include <QDateTime>
 #include <QHBoxLayout>
 #include <QLabel>
 #include <QScrollBar>
@@ -44,6 +45,10 @@ public:
 
     QPropertyAnimation *opacityTween;
     QGraphicsOpacityEffect *opacityEffect;
+
+    int timerId;
+    bool underMouse;
+    QTime lastResized;
 
     // Tab Bar Properties
     QTabBar::SelectionBehavior selectionBehaviorOnRemove;

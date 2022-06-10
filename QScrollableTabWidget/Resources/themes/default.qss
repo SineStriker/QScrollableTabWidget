@@ -61,7 +61,7 @@ QScrollableTabBar>QScrollBar#scroll-bar {
 QScrollableTabBar>QScrollBar#scroll-bar::handle {
     background: rgba(0, 0, 0, 0.3);
     border: 0px;
-    min-width: 90px;
+    min-width: 150px;
 }
 
 QScrollableTabBar>QScrollBar#scroll-bar::handle:hover {

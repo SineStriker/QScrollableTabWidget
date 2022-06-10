@@ -71,13 +71,8 @@ protected:
     void mousePressEvent(QMouseEvent *event) override;
     void mouseMoveEvent(QMouseEvent *event) override;
     void mouseReleaseEvent(QMouseEvent *event) override;
-
-    void enterEvent(QEvent *event) override;
-    void leaveEvent(QEvent *event) override;
-
     void wheelEvent(QWheelEvent *event) override;
 
-    void changeEvent(QEvent *event) override;
     void timerEvent(QTimerEvent *event) override;
 
     bool eventFilter(QObject *obj, QEvent *event) override;
