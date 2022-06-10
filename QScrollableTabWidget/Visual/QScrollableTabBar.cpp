@@ -361,6 +361,10 @@ bool QScrollableTabBar::eventFilter(QObject *obj, QEvent *event) {
         }
         case QEvent::LayoutRequest: {
             d->entity->adjustSize();
+            if (d->needAutoScroll) {
+                d->autoScrollToCurrent();
+                d->needAutoScroll = false;
+            }
             break;
         }
         default:

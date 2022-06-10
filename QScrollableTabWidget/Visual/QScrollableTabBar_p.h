@@ -34,6 +34,8 @@ public:
     QScrollableTabBarTab *tabAtIndex(int index) const;
     void setCurrentTab(QScrollableTabBarTab *tab);
 
+    void autoScrollToCurrent() const;
+
     QScrollableTabBar *q_ptr;
 
     // Tabs Entity
@@ -58,6 +60,7 @@ public:
 
     // Drag
     int draggedIndex;
+    bool needAutoScroll;
 
     static QScrollableTabBar *draggedTabBar;
 };

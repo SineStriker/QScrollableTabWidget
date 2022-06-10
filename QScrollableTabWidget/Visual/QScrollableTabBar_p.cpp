@@ -30,6 +30,7 @@ void QScrollableTabBarPrivate::init() {
 
     selectionBehaviorOnRemove = QTabBar::SelectPreviousTab;
     draggedIndex = -1;
+    needAutoScroll = false;
 
     entityLayout = new QHBoxLayout();
     entityLayout->setMargin(0);
@@ -159,12 +160,20 @@ void QScrollableTabBarPrivate::setCurrentTab(QScrollableTabBarTab *tab) {
     current = tab;
 
 out:
+    needAutoScroll = true;
+    q->updateGeometry();
+
+    emit q->currentChanged(entityLayout->indexOf(tab));
+}
+
+void QScrollableTabBarPrivate::autoScrollToCurrent() const {
+    Q_Q(const QScrollableTabBar);
+
+    auto tab = current;
     // Move View Port
     if (tab->x() + entity->x() < 0) {
         scrollBar->setValue(tab->x());
     } else if (tab->x() + tab->width() + entity->x() > q->width()) {
         scrollBar->setValue(tab->x() + tab->width() - q->width());
     }
-
-    emit q->currentChanged(entityLayout->indexOf(tab));
 }
