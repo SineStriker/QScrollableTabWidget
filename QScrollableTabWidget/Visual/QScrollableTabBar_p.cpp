@@ -150,7 +150,7 @@ void QScrollableTabBarPrivate::setCurrentTab(QScrollableTabBarTab *tab) {
 
     if (current) {
         if (current == tab) {
-            return;
+            goto out;
         }
         current->setSelected(false);
     }
@@ -158,6 +158,7 @@ void QScrollableTabBarPrivate::setCurrentTab(QScrollableTabBarTab *tab) {
     previous = current;
     current = tab;
 
+out:
     // Move View Port
     if (tab->x() + entity->x() < 0) {
         scrollBar->setValue(tab->x());

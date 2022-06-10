@@ -6,6 +6,7 @@
 #include <QDropEvent>
 #include <QFile>
 #include <QMimeData>
+#include <QLabel>
 
 static void loadStyleSheet() {
     QFile qss(":/themes/default.qss");
@@ -27,17 +28,17 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     tabs = new QScrollableTabWidget();
     setCentralWidget(tabs);
 
-    tabs->addTab(new QWidget(), "tab-1");
-    tabs->addTab(new QWidget(), "tab-2");
-    tabs->addTab(new QWidget(), "tab-3");
-    tabs->addTab(new QWidget(), "tab-111111");
-    tabs->addTab(new QWidget(), "tab-222222");
-    tabs->addTab(new QWidget(), "tab-33333333");
-    tabs->addTab(new QWidget(), "tab-4444");
-    tabs->addTab(new QWidget(), "tab-555555");
-    tabs->addTab(new QWidget(), "tab-666");
-    tabs->addTab(new QWidget(), "tab-77777777");
-    tabs->addTab(new QWidget(), "tab-8888888888");
+    tabs->addTab(new QLabel("1"), "tab-1");
+    tabs->addTab(new QLabel("2"), "tab-2");
+    tabs->addTab(new QLabel("3"), "tab-3");
+    tabs->addTab(new QLabel("11"), "tab-111111");
+    tabs->addTab(new QLabel("22"), "tab-222222");
+    tabs->addTab(new QLabel("33"), "tab-33333333");
+    tabs->addTab(new QLabel("44"), "tab-4444");
+    tabs->addTab(new QLabel("55"), "tab-555555");
+    tabs->addTab(new QLabel("66"), "tab-666");
+    tabs->addTab(new QLabel("77"), "tab-77777777");
+    tabs->addTab(new QLabel("88"), "tab-8888888888");
 
     resize(1280, 720);
 
