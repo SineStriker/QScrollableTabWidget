@@ -3,7 +3,7 @@
 
 #include <QHBoxLayout>
 #include <QLabel>
-#include <QToolButton>
+#include <QPushButton>
 #include <QVariant>
 #include <QtGlobal>
 
@@ -21,9 +21,9 @@ public:
 
     QHBoxLayout *layout;
 
-    QToolButton *iconButton;
+    QPushButton *iconButton;
     QLabel *textLabel;
-    QToolButton *closeButton;
+    QPushButton *closeButton;
 
     QVariant data;
 };

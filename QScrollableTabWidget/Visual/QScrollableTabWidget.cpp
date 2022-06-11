@@ -192,7 +192,7 @@ void QScrollableTabWidget::dropEvent(QDropEvent *event) {
             if (index < 0 && (p.y() >= 0 && p.y() <= bar->height())) {
                 if (p.x() < 0) {
                     index = 0;
-                } else if (p.x() > bar->width()) {
+                } else if (p.x() > bar->totalWidth()) {
                     index = bar->count();
                 }
             }

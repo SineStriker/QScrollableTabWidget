@@ -15,7 +15,7 @@ void QScrollableTabBarTabPrivate::init() {
     layout->setMargin(0);
     layout->setSpacing(0);
 
-    iconButton = new QToolButton();
+    iconButton = new QPushButton();
     iconButton->setAttribute(Qt::WA_TransparentForMouseEvents);
     iconButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     iconButton->setObjectName("icon-button");
@@ -25,7 +25,7 @@ void QScrollableTabBarTabPrivate::init() {
     textLabel->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     textLabel->setObjectName("text-label");
 
-    closeButton = new QToolButton();
+    closeButton = new QPushButton();
     closeButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     closeButton->setObjectName("close-button");
 

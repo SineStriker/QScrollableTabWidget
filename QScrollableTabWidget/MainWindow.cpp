@@ -1,12 +1,16 @@
 #include "MainWindow.h"
 #include "Visual/QScrollableTabBar.h"
 
+#include "Visual/QCommandPalette.h"
+#include "Visual/QCommandPaletteItem.h"
+
 #include <QApplication>
 #include <QDebug>
 #include <QDropEvent>
 #include <QFile>
-#include <QMimeData>
 #include <QLabel>
+#include <QListWidget>
+#include <QMimeData>
 
 static void loadStyleSheet() {
     QFile qss(":/themes/default.qss");
@@ -28,7 +32,15 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     tabs = new QScrollableTabWidget();
     setCentralWidget(tabs);
 
-    tabs->addTab(new QLabel("1"), "tab-1");
+    auto w1 = new QCommandPaletteItemWidget();
+    w1->setLeftTopText("CMake: Configure");
+    w1->setLeftBottomText("CMake: Configure");
+    w1->setRightTopText("Recently Used");
+
+    auto cp = new QCommandPalette();
+    cp->addWidget(w1);
+
+    tabs->addTab(cp, "tab-1");
     tabs->addTab(new QLabel("2"), "tab-2");
     tabs->addTab(new QLabel("3"), "tab-3");
     tabs->addTab(new QLabel("11"), "tab-111111");
@@ -49,17 +61,4 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
 }
 
 MainWindow::~MainWindow() {
-}
-
-void MainWindow::dragEnterEvent(QDragEnterEvent *event) {
-    event->acceptProposedAction();
-}
-
-void MainWindow::dropEvent(QDropEvent *event) {
-    const QMimeData *mime = event->mimeData();
-    auto formats = mime->formats();
-    for (auto it = formats.begin(); it != formats.end(); ++it) {
-        auto format = *it;
-        qDebug().noquote() << format << mime->data(format);
-    }
 }

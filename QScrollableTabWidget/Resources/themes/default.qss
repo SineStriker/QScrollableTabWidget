@@ -1,6 +1,11 @@
+/* MainWindow */
+
 MainWindow {
     background-color: white;
 }
+
+
+/* QScrollableTabWidget */
 
 QScrollableTabBar {
     background-color: #F3F3F3;
@@ -75,4 +80,11 @@ QScrollableTabBar>QScrollBar#scroll-bar::add-page,
 QScrollableTabBar>QScrollBar#scroll-bar::up-arrow,
 QScrollableTabBar>QScrollBar#scroll-bar::down-arrow {
     background: transparent;
+}
+
+
+/* QCommandPalette */
+
+QCommandPaletteItemWidget>QLabel[type=label] {
+    padding: 4px;
 }

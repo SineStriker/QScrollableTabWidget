@@ -13,8 +13,5 @@ public:
 
 protected:
     QScrollableTabWidget *tabs;
-
-    void dragEnterEvent(QDragEnterEvent *event) override;
-    void dropEvent(QDropEvent *event) override;
 };
 #endif // MAINWINDOW_H

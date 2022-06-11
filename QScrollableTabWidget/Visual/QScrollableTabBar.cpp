@@ -34,7 +34,7 @@ int QScrollableTabBar::insertTab(int index, const QIcon &icon, const QString &te
     tab->setText(text);
 
     Q_D(QScrollableTabBar);
-    d->entityLayout->insertWidget(index, tab);
+    d->entityLayout->insertWidget(qMin(d->entityLayout->count(), index), tab);
 
     connect(tab->closeButton(), &QAbstractButton::clicked, this, &QScrollableTabBar::_q_closeTab);
 
@@ -99,8 +99,7 @@ void QScrollableTabBar::moveTab(int from, int to) {
     if (!item) {
         return;
     }
-    d->entityLayout->insertItem(to, item);
-
+    d->entityLayout->insertItem(qMin(d->entityLayout->count(), to), item);
     emit tabMoved(from, to);
 }
 
@@ -182,7 +181,7 @@ QRect QScrollableTabBar::tabRect(int index) const {
     if (!tab) {
         return QRect();
     }
-    return QRect(tab->pos(), tab->size());
+    return QRect(d->entity->pos() + tab->pos(), tab->size());
 }
 
 int QScrollableTabBar::tabAt(const QPoint &pos) const {
@@ -193,6 +192,11 @@ int QScrollableTabBar::tabAt(const QPoint &pos) const {
         }
     }
     return -1;
+}
+
+int QScrollableTabBar::totalWidth() const {
+    Q_D(const QScrollableTabBar);
+    return d->entity->width();
 }
 
 int QScrollableTabBar::currentIndex() const {

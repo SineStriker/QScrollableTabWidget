@@ -45,6 +45,7 @@ public:
 
     QRect tabRect(int index) const;
     int tabAt(const QPoint &pos) const;
+    int totalWidth() const;
 
     int currentIndex() const;
     int count() const;

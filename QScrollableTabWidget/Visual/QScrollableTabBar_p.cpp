@@ -113,7 +113,7 @@ void QScrollableTabBarPrivate::startDrag(QScrollableTabBarTab *tab) {
     QDrag *drag = new QDrag(tab);
     QMimeData *mime = new QMimeData();
 
-    // Carry Data
+    // Bind Data
     QVariant var = tab->data();
     if (var.type() == QVariant::String) {
         mime->setData("text/plain", var.toString().toUtf8());

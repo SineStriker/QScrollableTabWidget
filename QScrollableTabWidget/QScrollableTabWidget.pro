@@ -1,4 +1,4 @@
-QT       += core gui
+QT       += core gui core-private widgets-private
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -9,6 +9,9 @@ CONFIG += c++11
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+    Visual/QCommandPalette.cpp \
+    Visual/QCommandPaletteItem.cpp \
+    Visual/QCommandPalette_p.cpp \
     Visual/QScrollableTabBar.cpp \
     Visual/QScrollableTabBarTab.cpp \
     Visual/QScrollableTabBarTab_p.cpp \
@@ -20,6 +23,9 @@ SOURCES += \
 
 HEADERS += \
     MainWindow.h \
+    Visual/QCommandPalette.h \
+    Visual/QCommandPaletteItem.h \
+    Visual/QCommandPalette_p.h \
     Visual/QScrollableTabBar.h \
     Visual/QScrollableTabBarTab.h \
     Visual/QScrollableTabBarTab_p.h \
