@@ -10,8 +10,8 @@ You may change the style with Qt stylesheets.
 
 ## More
 
-License: Apache 2.0
-
 Required: Qt Widgets Modules
+
+License: Apache 2.0
 
 Have fun.
