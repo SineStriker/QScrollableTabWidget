@@ -13,5 +13,7 @@ public:
 
 protected:
     QScrollableTabWidget *tabs;
+
+    void closeEvent(QCloseEvent *event) override;
 };
 #endif // MAINWINDOW_H

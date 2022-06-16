@@ -1,6 +1,7 @@
 /* MainWindow */
 
 MainWindow {
+    color: #1E1E1E;
     background-color: white;
 }
 

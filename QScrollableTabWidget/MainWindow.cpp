@@ -11,6 +11,7 @@
 #include <QLabel>
 #include <QListWidget>
 #include <QMimeData>
+#include <QStandardPaths>
 
 static void loadStyleSheet() {
     QFile qss(":/themes/default.qss");
@@ -54,11 +55,24 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
 
     resize(1280, 720);
 
-    connect(tabs, &QScrollableTabWidget::tabCloseRequested, this,
-            [&](int index) { tabs->removeTab(index); });
+    connect(tabs, &QScrollableTabWidget::tabCloseRequested, this, [&](int index) {
+        auto tab = tabs->widget(index);
+        tabs->removeTab(index);
+        tab->deleteLater();
+    });
 
     setAcceptDrops(true);
+
+    qDebug() << QStandardPaths::writableLocation(QStandardPaths::ApplicationsLocation);
 }
 
 MainWindow::~MainWindow() {
+}
+
+void MainWindow::closeEvent(QCloseEvent *event) {
+    for (int i = tabs->count() - 1; i >= 0; --i) {
+        auto tab = tabs->widget(i);
+        tabs->removeTab(i);
+        tab->deleteLater();
+    }
 }
