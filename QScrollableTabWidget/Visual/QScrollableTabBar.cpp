@@ -360,8 +360,11 @@ bool QScrollableTabBar::eventFilter(QObject *obj, QEvent *event) {
     } else if (obj == d->entity) {
         switch (event->type()) {
         case QEvent::Resize: {
+            auto e = static_cast<QResizeEvent *>(event);
             d->updateScroll();
-            updateGeometry();
+            if (e->oldSize().height() != e->size().height()) {
+                updateGeometry();
+            }
             break;
         }
         case QEvent::LayoutRequest: {
