@@ -361,6 +361,7 @@ bool QScrollableTabBar::eventFilter(QObject *obj, QEvent *event) {
         switch (event->type()) {
         case QEvent::Resize: {
             d->updateScroll();
+            updateGeometry();
             break;
         }
         case QEvent::LayoutRequest: {
